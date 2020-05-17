@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+###
+# File: /mnt/d/pycodes/lxflearnpy/do_tcp.py
+# Project: /mnt/d/pycodes/lxflearnpy
+# Created Date: Sunday, May 17th 2020, 4:23:52 pm
+# Author: Sheng Liang
+# -----
+# Last Modified: Sun May 17 2020
+# Modified By: Sheng Liang
+# -----
+# Copyright (c) 2020 Wu & Sheng
+# 
+# It will be better.
+# Keep happy!
+# -----
+# HISTORY:
+# Date      	By	Comments
+# ----------	---	----------------------------------------------------------
+###
+
+import socket
+
+# 创建一个socket:
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# 建立连接:
+s.connect(('www.sina.com.cn', 80))
+
+# 发送数据:
+s.send(b'GET / HTTP/1.1\r\nHost: www.sina.com.cn\r\nConnection: close\r\n\r\n')
+
+# 接收数据:
+buffer = []
+
+while True:
+    # 每次最多接收1k字节:
+    d = s.recv(1024)
+    if d:
+        buffer.append(d)
+    else:
+        break
+
+data = b''.join(buffer)
+
+# 关闭连接:
+s.close()
+
+header, html = data.split(b'\r\n\r\n', 1)
+print(header.decode('utf-8'))
+
+# 把接收的数据写入文件:
+with open('sina.html', 'wb') as f:
+    f.write(html)
